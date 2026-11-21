@@ -5,7 +5,7 @@ REM Windows-only: there is no .sh counterpart (on macOS, Docker Desktop is
 REM installed with 'brew install --cask docker' instead).
 REM Double-click this file, or run it from cmd/PowerShell.
 REM An argument "nopause" skips the final pause.
-setlocal EnableExtensions
+setlocal EnableExtensions EnableDelayedExpansion
 
 set "DISTRO=Ubuntu-24.04"
 set "DOCKER_EXE=C:\Program Files\Docker\Docker\Docker Desktop.exe"
@@ -25,7 +25,7 @@ if exist "%DOCKER_EXE%" (
     exit /b 1
   )
   winget install --id Docker.DockerDesktop --exact --accept-package-agreements --accept-source-agreements
-  if errorlevel 1 (
+  if not "!errorlevel!"=="0" (
     echo [FAIL] winget could not install Docker Desktop. See the message above.
     if /i not "%~1"=="nopause" pause
     exit /b 1
@@ -48,7 +48,7 @@ set "DOCKER_WAS_RUNNING=0"
 tasklist /FI "IMAGENAME eq Docker Desktop.exe" 2>nul | find /I "Docker Desktop.exe" >nul
 if not errorlevel 1 set "DOCKER_WAS_RUNNING=1"
 wsl --set-default %DISTRO% >nul 2>nul
-if errorlevel 1 (
+if not "!errorlevel!"=="0" (
   echo [FAIL] Could not set %DISTRO% as the default WSL distro. Is it installed? Run: setup\2-install-wsl.cmd
   if /i not "%~1"=="nopause" pause
   exit /b 1
@@ -70,7 +70,7 @@ if "%DOCKER_WAS_RUNNING%"=="0" (
 set "TRIES=0"
 :waitdocker
 wsl -d %DISTRO% -e docker info >nul 2>nul
-if not errorlevel 1 goto :ready
+if "!errorlevel!"=="0" goto :ready
 set /a TRIES+=1
 set /a "SECS=TRIES*2"
 set /a "REM5=TRIES%%5"

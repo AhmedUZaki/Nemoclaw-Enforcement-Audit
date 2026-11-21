@@ -10,6 +10,8 @@ before doing anything, so re-running any of them is safe.
 | 2 | `2-install-wsl.cmd` | Installs WSL 2 + Ubuntu-24.04, if missing. **Windows only** — WSL is a Windows concept, there is nothing to install on macOS/Linux. |
 | 3 | `3-install-docker-desktop.cmd` | Installs Docker Desktop, if missing; makes sure it is running and reachable from Ubuntu-24.04. **Windows only** — on macOS, install Docker Desktop yourself (`brew install --cask docker`). |
 | 4 | `4-install-nemoclaw.sh` + `.cmd` | Installs NemoClaw (which installs OpenShell and its gateway as part of its own install). Runs on macOS, Linux, and Windows (via WSL). |
+| 5 | `5-uninstall-everything.sh` + `.cmd` | **Deletes things.** Menu by number (`0` = items 1-5): sandboxes/containers, gateway service, commands, `~/.nemoclaw`, nvm; and, Windows only, Docker Desktop (6) and the Ubuntu distro (7). Items 6 and 7 are never part of `0` and each needs its own typed confirmation. Add `dry` (`.cmd`) or `DRY_RUN=1` (`.sh`) to preview. |
+
 
 Every `.cmd` file is a thin Windows wrapper: it just forwards into WSL and
 runs the matching `.sh` file there. The real logic lives in the `.sh` files,

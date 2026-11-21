@@ -2,7 +2,7 @@
 REM Read-only readiness check for the whole project, on Windows: WSL and
 REM Docker Desktop, then everything inside WSL (1-check-environment.sh).
 REM Changes nothing. Double-click this file, or run it from cmd/PowerShell.
-setlocal EnableExtensions
+setlocal EnableExtensions EnableDelayedExpansion
 
 cd /d "%~dp0"
 set "FAILS=0"
@@ -26,15 +26,15 @@ if errorlevel 1 (
 echo   [PASS] wsl.exe ^(the WSL manager^) is present -- this does NOT mean a Linux distro is installed, see the next line
 
 wsl -d %DISTRO% -e bash -c "exit 0" >nul 2>nul
-if errorlevel 1 (
+if not "!errorlevel!"=="0" (
   echo   [FAIL] %DISTRO% was not found under wsl.exe, or cannot run bash. Run: setup\2-install-wsl.cmd
   set /a FAILS+=1
   goto :summary
 )
 echo   [PASS] %DISTRO% is installed under wsl.exe and runs bash
 
-wsl -d %DISTRO% -e bash -c "uname -r | grep -qi wsl2"
-if errorlevel 1 (
+wsl -d %DISTRO% -e bash -c "uname -r | grep -qi wsl2" >nul 2>nul
+if not "!errorlevel!"=="0" (
   echo   [FAIL] %DISTRO% is not WSL 2. Run: setup\2-install-wsl.cmd
   set /a FAILS+=1
 ) else (
@@ -55,7 +55,7 @@ if "%DOCKER_OK%"=="1" (
 echo.
 echo Inside WSL
 wsl -d %DISTRO% bash ./1-check-environment.sh
-if errorlevel 1 set /a FAILS+=1
+if not "!errorlevel!"=="0" set /a FAILS+=1
 
 :summary
 echo.
